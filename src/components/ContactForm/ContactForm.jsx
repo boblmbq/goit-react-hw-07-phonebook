@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid';
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/selectors';
-import { addContact } from 'redux/contactSlice';
+import { selectContacts } from 'redux/selectors';
+import { addContact } from 'redux/operations';
 
 const LABEL_IDS = {
   nameId: nanoid(),
@@ -13,19 +13,22 @@ const { nameId, numberId } = LABEL_IDS;
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
-  const contact = useSelector(getContacts);
+  const contact = useSelector(selectContacts);
 
-  const onFormSubmit = e => {
+  const onFormSubmit = async e => {
     e.preventDefault();
     const name = e.target.elements.name.value;
+    const number = e.target.elements.number.value;
 
     if (contact.some(e => e.name === name)) {
       alert('this contact is allready exist, please add a new one');
       return;
     }
 
-    const number = e.target.elements.number.value;
-    dispatch(addContact(name, number));
+    const payload = { name, number };
+
+    dispatch(addContact(payload));
+    
     e.target.reset();
   };
 
